@@ -375,17 +375,40 @@ function setLang(lang) {
   document.getElementById("emailInput").placeholder = c.emailPh;
 }
 
-function handleSubmit() {
+async function handleSubmit() {
   var inp = document.getElementById("emailInput");
   var btn = document.getElementById("ctaSubmit");
-  if (inp.value && inp.value.indexOf("@") > -1) {
-    inp.value = "";
-    inp.placeholder = currentLang === "it" ? "Sei dentro. A presto." : "You're in. See you on the other side.";
-    btn.innerHTML = "Done &#10003;";
-    btn.style.background = "#4ade80";
-    btn.style.color = "#0e0e0e";
+  var email = inp.value;
+
+  if (!email || email.indexOf("@") === -1) return;
+
+  btn.innerHTML = "...";
+  btn.disabled = true;
+
+  try {
+    var response = await fetch('/api/waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email })
+    });
+
+    var data = await response.json();
+
+    if (response.ok) {
+      inp.value = "";
+      inp.placeholder = currentLang === "it" ? "Sei dentro. A presto." : "You're in. See you on the other side.";
+      btn.innerHTML = "Done &#10003;";
+      btn.style.background = "#4ade80";
+      btn.style.color = "#0e0e0e";
+    } else {
+      btn.innerHTML = data.error || "Errore";
+      btn.disabled = false;
+      setTimeout(function() {
+        btn.innerHTML = currentLang === "it" ? "Entra in lista &#8594;" : "Join waitlist &#8594;";
+      }, 2000);
+    }
+  } catch (e) {
+    btn.innerHTML = "Errore";
+    btn.disabled = false;
   }
 }
-</script>
-</body>
-</html>
