@@ -375,40 +375,4 @@ function setLang(lang) {
   document.getElementById("emailInput").placeholder = c.emailPh;
 }
 
-async function handleSubmit() {
-  var inp = document.getElementById("emailInput");
-  var btn = document.getElementById("ctaSubmit");
-  var email = inp.value;
-
-  if (!email || email.indexOf("@") === -1) return;
-
-  btn.innerHTML = "...";
-  btn.disabled = true;
-
-  try {
-    var response = await fetch('/api/waitlist', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email })
-    });
-
-    var data = await response.json();
-
-    if (response.ok) {
-      inp.value = "";
-      inp.placeholder = currentLang === "it" ? "Sei dentro. A presto." : "You're in. See you on the other side.";
-      btn.innerHTML = "Done &#10003;";
-      btn.style.background = "#4ade80";
-      btn.style.color = "#0e0e0e";
-    } else {
-      btn.innerHTML = data.error || "Errore";
-      btn.disabled = false;
-      setTimeout(function() {
-        btn.innerHTML = currentLang === "it" ? "Entra in lista &#8594;" : "Join waitlist &#8594;";
-      }, 2000);
-    }
-  } catch (e) {
-    btn.innerHTML = "Errore";
-    btn.disabled = false;
-  }
-}
+async function handleSubmit() { var inp = document.getElementById("emailInput"); var btn = document.getElementById("ctaSubmit"); var email = inp.value; if (!email || email.indexOf("@") === -1) return; btn.innerHTML = "..."; btn.disabled = true; try { var response = await fetch('https://https://nkzgisgrbipbnaogeryw.supabase.co/rest/v1/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5remdpc2dyYmlwYm5hb2dlcnl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1ODAwMzcsImV4cCI6MjA5MzE1NjAzN30.guaR3oAAWfEnYz6SIcDyUodW_hAkmv7_g-zqwpDCRGk', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5remdpc2dyYmlwYm5hb2dlcnl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1ODAwMzcsImV4cCI6MjA5MzE1NjAzN30.guaR3oAAWfEnYz6SIcDyUodW_hAkmv7_g-zqwpDCRGk', 'Prefer': 'return=minimal' }, body: JSON.stringify({ email: email }) }); if (response.ok || response.status === 201) { window.location.href = 'https://form.typeform.com/to/Pw3K6cRA#email=' + encodeURIComponent(email); } else { btn.innerHTML = "Errore"; btn.disabled = false; setTimeout(function() { btn.disabled = false; btn.innerHTML = "Join waitlist →"; }, 2000); } } catch (e) { window.location.href = 'https://form.typeform.com/to/Pw3K6cRA#email=' + encodeURIComponent(email); } }
