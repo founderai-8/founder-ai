@@ -47,7 +47,13 @@ async function loadHistory(sessionId: string) {
 
             const rows = await res.json()
 
-      return rows.map((r: { role: string; content: string }) => ({ role: r.role, content: r.content }))
+      return rows
+        .filter((r: { role: string; content: string }) =>
+          (r.role === 'user' || r.role === 'assistant') &&
+          typeof r.content === 'string' &&
+          r.content.trim() !== ''
+        )
+        .map((r: { role: string; content: string }) => ({ role: r.role, content: r.content }))
 
     } catch {
 
@@ -82,7 +88,17 @@ export async function POST(request: NextRequest) {
       const supabaseHistory = sessionId ? await loadHistory(sessionId) : []
       console.log('[chat] messaggi caricati da Supabase:', supabaseHistory.length)
 
-      const contextMessages = supabaseHistory.length > 0 ? supabaseHistory : messages
+      let contextMessages: Array<{ role: string; content: string }>
+      if (supabaseHistory.length > 0) {
+        const last = supabaseHistory[supabaseHistory.length - 1]
+        const alreadyInHistory =
+          last.role === lastUserMessage?.role && last.content === lastUserMessage?.content
+        contextMessages = alreadyInHistory
+          ? supabaseHistory
+          : [...supabaseHistory, { role: lastUserMessage.role, content: lastUserMessage.content }]
+      } else {
+        contextMessages = messages
+      }
       console.log('[chat] contesto inviato ad Anthropic:', JSON.stringify(contextMessages, null, 2))
 
       const response = await client.messages.create({
