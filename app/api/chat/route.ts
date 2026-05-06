@@ -71,6 +71,8 @@ export async function POST(request: NextRequest) {
     try {
           const { messages, sessionId } = await request.json()
 
+      console.log('[chat] sessionId ricevuto:', sessionId ?? 'nessuno')
+
       const lastUserMessage = messages[messages.length - 1]
 
       if (sessionId && lastUserMessage?.role === 'user') {
@@ -78,7 +80,10 @@ export async function POST(request: NextRequest) {
       }
 
       const supabaseHistory = sessionId ? await loadHistory(sessionId) : []
+      console.log('[chat] messaggi caricati da Supabase:', supabaseHistory.length)
+
       const contextMessages = supabaseHistory.length > 0 ? supabaseHistory : messages
+      console.log('[chat] contesto inviato ad Anthropic:', JSON.stringify(contextMessages, null, 2))
 
       const response = await client.messages.create({
               model: 'claude-sonnet-4-20250514',
