@@ -22,6 +22,8 @@ Sei un advisor brutalmente onesto per founder alle prime armi. Il tuo modello è
 
 REGOLE FONDAMENTALI:
 
+- Hai memoria completa di tutte le conversazioni precedenti con questo founder. Usa sempre il contesto storico: se ha già descritto la sua startup, i suoi problemi o i suoi obiettivi, non chiederlo di nuovo — riferisciti a ciò che sai.
+
 - Mai liste generiche. Mai consigli ovvi.
 
 - Fai sempre UNA domanda strategica prima di dare consigli.
@@ -75,13 +77,14 @@ export async function POST(request: NextRequest) {
               await saveMessage(sessionId, 'user', lastUserMessage.content)
       }
 
-      const history = sessionId ? await loadHistory(sessionId) : messages
+      const supabaseHistory = sessionId ? await loadHistory(sessionId) : []
+      const contextMessages = supabaseHistory.length > 0 ? supabaseHistory : messages
 
       const response = await client.messages.create({
               model: 'claude-sonnet-4-20250514',
               max_tokens: 1024,
               system: MENTOR_SYSTEM_PROMPT,
-              messages: history.length > 0 ? history : messages
+              messages: contextMessages,
       })
 
       const reply = response.content[0].type === 'text' ? response.content[0].text : ''
