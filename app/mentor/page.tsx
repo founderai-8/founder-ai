@@ -7,12 +7,27 @@ interface Message {
     content: string
 }
 
+const COOKIE_KEY = 'founderai_session'
+
 const getSessionId = () => {
-    let id = localStorage.getItem('founderai_session')
+    // Try localStorage first, then cookie as fallback (survives when browser clears localStorage)
+    let id = localStorage.getItem(COOKIE_KEY)
+
     if (!id) {
-          id = crypto.randomUUID()
-          localStorage.setItem('founderai_session', id)
+        const match = document.cookie.match(new RegExp(`(?:^|; )${COOKIE_KEY}=([^;]+)`))
+        if (match) id = match[1]
     }
+
+    if (!id) {
+        id = crypto.randomUUID()
+    }
+
+    // Persist to both storage mechanisms
+    localStorage.setItem(COOKIE_KEY, id)
+    const expires = new Date()
+    expires.setFullYear(expires.getFullYear() + 1)
+    document.cookie = `${COOKIE_KEY}=${id}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`
+
     return id
 }
 
@@ -23,19 +38,17 @@ export default function MentorPage() {
     const [sessionId, setSessionId] = useState<string | null>(null)
     const [memoryCount, setMemoryCount] = useState(0)
     const bottomRef = useRef<HTMLDivElement>(null)
+    // Ref keeps sessionId always current — avoids stale closure in sendMessage
+    const sessionIdRef = useRef<string | null>(null)
 
   useEffect(() => {
         const id = getSessionId()
+        sessionIdRef.current = id
         setSessionId(id)
-        fetch(`https://nkzgisgrbipbnaogeryw.supabase.co/rest/v1/conversations?session_id=eq.${id}&order=created_at.asc&select=role,content`, {
-                headers: {
-                          apikey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5remdpc2dyYmlwYm5hb2dlcnl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1ODAwMzcsImV4cCI6MjA5MzE1NjAzN30.guaR3oAAWfEnYz6SIcDyUodW_hAkmv7_g-zqwpDCRGk',
-                          Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5remdpc2dyYmlwYm5hb2dlcnl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1ODAwMzcsImV4cCI6MjA5MzE1NjAzN30.guaR3oAAWfEnYz6SIcDyUodW_hAkmv7_g-zqwpDCRGk'
-                }
-        })
+        fetch(`/api/history?sessionId=${id}`)
           .then(r => r.json())
           .then(rows => {
-                    if (rows.length > 0) {
+                    if (Array.isArray(rows) && rows.length > 0) {
                                 setMessages(rows.map((r: { role: 'user' | 'assistant'; content: string }) => ({ role: r.role, content: r.content })))
                                 setMemoryCount(rows.length)
                     }
@@ -60,7 +73,7 @@ export default function MentorPage() {
                 const response = await fetch('/api/chat', {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ messages: updatedMessages, sessionId })
+                          body: JSON.stringify({ messages: updatedMessages, sessionId: sessionIdRef.current })
                 })
 
           const data = await response.json()
