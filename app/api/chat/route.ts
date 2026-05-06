@@ -36,7 +36,7 @@ REGOLE FONDAMENTALI:
 
 - Mai più di 150 parole per risposta. Sii denso, non lungo.`
 
-async function loadHistory(sessionId: string) {
+async function loadHistory(sessionId: string): Promise<Array<{ role: 'user' | 'assistant'; content: string }>> {
     try {
           const res = await fetch(
                   `${SUPABASE_URL}/rest/v1/conversations?session_id=eq.${sessionId}&order=created_at.asc&select=role,content`,
@@ -53,7 +53,7 @@ async function loadHistory(sessionId: string) {
           typeof r.content === 'string' &&
           r.content.trim() !== ''
         )
-        .map((r: { role: string; content: string }) => ({ role: r.role, content: r.content }))
+        .map((r: { role: string; content: string }) => ({ role: r.role as 'user' | 'assistant', content: r.content }))
 
     } catch {
 
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
       const supabaseHistory = sessionId ? await loadHistory(sessionId) : []
       console.log('[chat] messaggi caricati da Supabase:', supabaseHistory.length)
 
-      let contextMessages: Array<{ role: string; content: string }>
+      let contextMessages: Array<{ role: 'user' | 'assistant'; content: string }>
       if (supabaseHistory.length > 0) {
         const last = supabaseHistory[supabaseHistory.length - 1]
         const alreadyInHistory =
