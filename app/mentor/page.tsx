@@ -43,6 +43,7 @@ export default function MentorPage() {
 
   useEffect(() => {
         const id = getSessionId()
+        console.log('[mentor] sessionId generato:', id)
         sessionIdRef.current = id
         setSessionId(id)
         fetch(`/api/history?sessionId=${id}`)

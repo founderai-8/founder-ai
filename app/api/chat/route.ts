@@ -81,6 +81,9 @@ export async function POST(request: NextRequest) {
 
       const lastUserMessage = messages[messages.length - 1]
 
+      console.log('[chat] sessionId:', sessionId)
+      console.log('[chat] supabaseHistory length:', supabaseHistory?.length ?? 'non ancora caricato')
+
       if (sessionId && lastUserMessage?.role === 'user') {
               await saveMessage(sessionId, 'user', lastUserMessage.content)
       }
