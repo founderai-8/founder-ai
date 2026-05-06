@@ -75,25 +75,25 @@ export default function MentorPage() {
   return (
         <div className="min-h-screen bg-[#0a0c1a] text-white flex flex-col">
               <nav className="border-b border-[#1e2340] px-8 py-4 flex justify-between items-center">
-                      <a href="/dashboard" className="text-gray-400 hover:text-white text-sm">← Dashboard</a>a>
-                      <span className="font-bold">Mentor AI</span>span>
+                      <a href="/dashboard" className="text-gray-400 hover:text-white text-sm">← Dashboard</a>
+                      <span className="font-bold">Mentor AI</span>
                       <div className="w-16" />
-              </nav>nav>
-        
+              </nav>
+
           {memoryCount > 0 && (
                   <div className="text-center py-2 text-xs text-[#5C7CFA] border-b border-[#1e2340]">
                             ↑ memoria attiva — {memoryCount} messaggi dalle sessioni precedenti
-                  </div>div>
+                  </div>
               )}
-        
+
               <div className="flex-1 overflow-y-auto px-8 py-6 max-w-3xl mx-auto w-full">
                 {messages.length === 0 && (
                     <div className="text-center mt-24">
-                                <p className="text-2xl font-bold mb-2">Ciao, sono il tuo Mentor.</p>p>
-                                <p className="text-gray-400">Dimmi su cosa stai lavorando.</p>p>
-                    </div>div>
+                                <p className="text-2xl font-bold mb-2">Ciao, sono il tuo Mentor.</p>
+                                <p className="text-gray-400">Dimmi su cosa stai lavorando.</p>
+                    </div>
                       )}
-              
+
                 {messages.map((msg, i) => (
                     <div key={i} className={`mb-6 flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                                 <div className={`max-w-xl px-5 py-3 rounded-2xl text-sm leading-relaxed ${
@@ -102,21 +102,21 @@ export default function MentorPage() {
                                       : 'bg-[#0f1229] border border-[#1e2340] text-gray-200'
                     }`}>
                                   {msg.content}
-                                </div>div>
-                    </div>div>
+                                </div>
+                    </div>
                   ))}
-              
+
                 {loading && (
                     <div className="flex justify-start mb-6">
                                 <div className="bg-[#0f1229] border border-[#1e2340] rounded-2xl px-5 py-3 text-gray-400 text-sm">
                                               Il mentor sta pensando...
-                                </div>div>
-                    </div>div>
+                                </div>
+                    </div>
                       )}
-              
+
                       <div ref={bottomRef} />
-              </div>div>
-        
+              </div>
+
               <div className="border-t border-[#1e2340] px-8 py-4 max-w-3xl mx-auto w-full">
                       <div className="flex gap-3">
                                 <input
@@ -133,9 +133,9 @@ export default function MentorPage() {
                                               className="bg-[#3B5BDB] text-white rounded-xl px-6 py-3 font-medium hover:bg-[#5C7CFA] transition-colors disabled:opacity-40"
                                             >
                                             →
-                                </button>button>
-                      </div>div>
-              </div>div>
-        </div>div>
+                                </button>
+                      </div>
+              </div>
+        </div>
       )
-}</div>
+}
