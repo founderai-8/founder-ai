@@ -37,7 +37,7 @@ REGOLE FONDAMENTALI:
 async function loadHistory(sessionId: string): Promise<Array<{ role: 'user' | 'assistant'; content: string }>> {
     try {
         const res = await fetch(
-            `${SUPABASE_URL}/rest/v1/conversations?session_id=eq.${sessionId}&order=created_at.asc&select=role,content`,
+            `${SUPABASE_URL}/rest/v1/mentor_messages?session_id=eq.${sessionId}&order=created_at.asc&select=role,content`,
             { headers: sbHeaders }
         )
         if (!res.ok) return []
@@ -56,7 +56,7 @@ async function loadHistory(sessionId: string): Promise<Array<{ role: 'user' | 'a
 
 async function saveMessage(sessionId: string, role: string, content: string) {
     try {
-        await fetch(`${SUPABASE_URL}/rest/v1/conversations`, {
+        await fetch(`${SUPABASE_URL}/rest/v1/mentor_messages`, {
             method: 'POST',
             headers: sbHeaders,
             body: JSON.stringify({ session_id: sessionId, role, content }),
