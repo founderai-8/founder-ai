@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { supabase } from '@/lib/supabase'
 
 interface Message {
     role: 'user' | 'assistant'
@@ -37,11 +38,19 @@ export default function MentorPage() {
     const [memoryCount, setMemoryCount] = useState(0)
     const bottomRef = useRef<HTMLDivElement>(null)
     const sessionIdRef = useRef<string | null>(null)
+    const [userId, setUserId] = useState<string | null>(null)
+    const userIdRef = useRef<string | null>(null)
 
     useEffect(() => {
         const id = getSessionId()
         sessionIdRef.current = id
         setSessionId(id)
+        supabase.auth.getUser().then(({ data }) => {
+            if (data.user) {
+                setUserId(data.user.id)
+                userIdRef.current = data.user.id
+            }
+        })
         fetch(`/api/history?sessionId=${id}`)
             .then(r => r.json())
             .then(rows => {
@@ -70,7 +79,7 @@ export default function MentorPage() {
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: text, sessionId: sessionIdRef.current }),
+                body: JSON.stringify({ message: text, sessionId: sessionIdRef.current, userId: userIdRef.current }),
             })
 
             const data = await response.json()
