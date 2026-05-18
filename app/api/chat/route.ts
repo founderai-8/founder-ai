@@ -64,11 +64,34 @@ async function saveMessage(sessionId: string, role: string, content: string) {
     } catch {}
 }
 
+async function loadFounderProfile(sessionId: string): Promise<string> {
+    try {
+        const res = await fetch(
+            `${SUPABASE_URL}/rest/v1/founder_profiles?session_id=eq.${sessionId}&limit=1`,
+            { headers: sbHeaders }
+        )
+        if (!res.ok) return ''
+        const rows = await res.json()
+        if (!Array.isArray(rows) || rows.length === 0) return ''
+        const p = rows[0]
+        const parts: string[] = []
+        if (p.startup_name) parts.push(`Startup: ${p.startup_name}`)
+        if (p.sector) parts.push(`Settore: ${p.sector}`)
+        if (p.country) parts.push(`Paese: ${p.country}`)
+        return parts.length > 0 ? `\n\nPROFILO FOUNDER:\n${parts.join('\n')}` : ''
+    } catch {
+        return ''
+    }
+}
+
 export async function POST(request: NextRequest) {
     try {
         const { message, sessionId } = await request.json()
 
-        const history = sessionId ? await loadHistory(sessionId) : []
+        const [history, founderProfile] = await Promise.all([
+            sessionId ? loadHistory(sessionId) : Promise.resolve([]),
+            sessionId ? loadFounderProfile(sessionId) : Promise.resolve(''),
+        ])
         const contextMessages: Array<{ role: 'user' | 'assistant'; content: string }> = [
             ...history,
             { role: 'user', content: message },
@@ -77,7 +100,7 @@ export async function POST(request: NextRequest) {
         const response = await client.messages.create({
             model: 'claude-sonnet-4-20250514',
             max_tokens: 1024,
-            system: MENTOR_SYSTEM_PROMPT,
+            system: MENTOR_SYSTEM_PROMPT + founderProfile,
             messages: contextMessages,
         })
 
