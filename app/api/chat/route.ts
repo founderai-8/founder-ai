@@ -1,5 +1,4 @@
 import Anthropic from '@anthropic-ai/sdk'
-
 import { NextRequest, NextResponse } from 'next/server'
 
 const client = new Anthropic({
@@ -7,7 +6,6 @@ const client = new Anthropic({
 })
 
 const SUPABASE_URL = 'https://nkzgisgrbipbnaogeryw.supabase.co'
-
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5remdpc2dyYmlwYm5hb2dlcnl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1ODAwMzcsImV4cCI6MjA5MzE1NjAzN30.guaR3oAAWfEnYz6SIcDyUodW_hAkmv7_g-zqwpDCRGk'
 
 const sbHeaders = {
@@ -38,87 +36,61 @@ REGOLE FONDAMENTALI:
 
 async function loadHistory(sessionId: string): Promise<Array<{ role: 'user' | 'assistant'; content: string }>> {
     try {
-          const res = await fetch(
-                  `${SUPABASE_URL}/rest/v1/conversations?session_id=eq.${sessionId}&order=created_at.asc&select=role,content`,
+        const res = await fetch(
+            `${SUPABASE_URL}/rest/v1/conversations?session_id=eq.${sessionId}&order=created_at.asc&select=role,content`,
             { headers: sbHeaders }
-                )
-
-      if (!res.ok) return []
-
-            const rows = await res.json()
-
-      return rows
-        .filter((r: { role: string; content: string }) =>
-          (r.role === 'user' || r.role === 'assistant') &&
-          typeof r.content === 'string' &&
-          r.content.trim() !== ''
         )
-        .map((r: { role: string; content: string }) => ({ role: r.role as 'user' | 'assistant', content: r.content }))
-
+        if (!res.ok) return []
+        const rows = await res.json()
+        return rows
+            .filter((r: { role: string; content: string }) =>
+                (r.role === 'user' || r.role === 'assistant') &&
+                typeof r.content === 'string' &&
+                r.content.trim() !== ''
+            )
+            .map((r: { role: string; content: string }) => ({ role: r.role as 'user' | 'assistant', content: r.content }))
     } catch {
-
-      return []
-
+        return []
     }
-
 }
 
 async function saveMessage(sessionId: string, role: string, content: string) {
     try {
-          await fetch(`${SUPABASE_URL}/rest/v1/conversations`, {
-                  method: 'POST',
-                  headers: sbHeaders,
-                  body: JSON.stringify({ session_id: sessionId, role, content }),
-          })
+        await fetch(`${SUPABASE_URL}/rest/v1/conversations`, {
+            method: 'POST',
+            headers: sbHeaders,
+            body: JSON.stringify({ session_id: sessionId, role, content }),
+        })
     } catch {}
 }
 
 export async function POST(request: NextRequest) {
     try {
-          const { messages, sessionId } = await request.json()
+        const { message, sessionId } = await request.json()
 
-      console.log('[chat] sessionId ricevuto:', sessionId ?? 'nessuno')
+        const history = sessionId ? await loadHistory(sessionId) : []
+        const contextMessages: Array<{ role: 'user' | 'assistant'; content: string }> = [
+            ...history,
+            { role: 'user', content: message },
+        ]
 
-      const lastUserMessage = messages[messages.length - 1]
+        const response = await client.messages.create({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 1024,
+            system: MENTOR_SYSTEM_PROMPT,
+            messages: contextMessages,
+        })
 
-      console.log('[chat] sessionId:', sessionId)
+        const reply = response.content[0].type === 'text' ? response.content[0].text : ''
 
-      if (sessionId && lastUserMessage?.role === 'user') {
-              await saveMessage(sessionId, 'user', lastUserMessage.content)
-      }
+        if (sessionId) {
+            await saveMessage(sessionId, 'user', message)
+            await saveMessage(sessionId, 'assistant', reply)
+        }
 
-      const supabaseHistory = sessionId ? await loadHistory(sessionId) : []
-      console.log('[chat] messaggi caricati da Supabase:', supabaseHistory.length)
-
-      let contextMessages: Array<{ role: 'user' | 'assistant'; content: string }>
-      if (supabaseHistory.length > 0) {
-        const last = supabaseHistory[supabaseHistory.length - 1]
-        const alreadyInHistory =
-          last.role === lastUserMessage?.role && last.content === lastUserMessage?.content
-        contextMessages = alreadyInHistory
-          ? supabaseHistory
-          : [...supabaseHistory, { role: lastUserMessage.role, content: lastUserMessage.content }]
-      } else {
-        contextMessages = messages
-      }
-      console.log('[chat] contesto inviato ad Anthropic:', JSON.stringify(contextMessages, null, 2))
-
-      const response = await client.messages.create({
-              model: 'claude-sonnet-4-20250514',
-              max_tokens: 1024,
-              system: MENTOR_SYSTEM_PROMPT,
-              messages: contextMessages,
-      })
-
-      const reply = response.content[0].type === 'text' ? response.content[0].text : ''
-
-      if (sessionId) {
-              await saveMessage(sessionId, 'assistant', reply)
-      }
-
-      return NextResponse.json({ message: reply })
-
+        return NextResponse.json({ message: reply })
     } catch (error) {
-          return NextResponse.json({ error: 'Errore del mentor' }, { status: 500 })
+        console.error('[chat] errore:', error)
+        return NextResponse.json({ error: 'Errore del mentor' }, { status: 500 })
     }
 }
