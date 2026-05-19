@@ -64,10 +64,10 @@ async function saveMessage(sessionId: string, role: string, content: string) {
     } catch {}
 }
 
-async function loadFounderProfile(sessionId: string): Promise<string> {
+async function loadFounderProfile(userId: string): Promise<string> {
     try {
         const res = await fetch(
-            `${SUPABASE_URL}/rest/v1/founder_profiles?session_id=eq.${sessionId}&limit=1`,
+            `${SUPABASE_URL}/rest/v1/founder_profiles?user_id=eq.${userId}&limit=1`,
             { headers: sbHeaders }
         )
         if (!res.ok) return ''
@@ -78,6 +78,14 @@ async function loadFounderProfile(sessionId: string): Promise<string> {
         if (p.startup_name) parts.push(`Startup: ${p.startup_name}`)
         if (p.sector) parts.push(`Settore: ${p.sector}`)
         if (p.country) parts.push(`Paese: ${p.country}`)
+        if (p.idea) parts.push(`Idea: ${p.idea}`)
+        if (p.customer) parts.push(`Cliente target: ${p.customer}`)
+        if (p.stage) parts.push(`Stage: ${p.stage}`)
+        if (p.problem) parts.push(`Problema: ${p.problem}`)
+        if (p.goal) parts.push(`Obiettivo: ${p.goal}`)
+        if (p.fear) parts.push(`Paura: ${p.fear}`)
+        if (p.team) parts.push(`Team: ${p.team}`)
+        if (p.budget) parts.push(`Budget: ${p.budget}`)
         return parts.length > 0 ? `\n\nPROFILO FOUNDER:\n${parts.join('\n')}` : ''
     } catch {
         return ''
@@ -86,11 +94,11 @@ async function loadFounderProfile(sessionId: string): Promise<string> {
 
 export async function POST(request: NextRequest) {
     try {
-        const { message, sessionId } = await request.json()
+        const { message, sessionId, userId } = await request.json()
 
         const [history, founderProfile] = await Promise.all([
             sessionId ? loadHistory(sessionId) : Promise.resolve([]),
-            sessionId ? loadFounderProfile(sessionId) : Promise.resolve(''),
+            userId ? loadFounderProfile(userId) : Promise.resolve(''),
         ])
         const contextMessages: Array<{ role: 'user' | 'assistant'; content: string }> = [
             ...history,
