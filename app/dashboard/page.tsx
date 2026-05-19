@@ -1,21 +1,34 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 export default function Dashboard() {
   const [user, setUser] = useState<any>(null)
+  const router = useRouter()
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) window.location.href = '/auth/login'
-      else setUser(data.user)
+    supabase.auth.getUser().then(async ({ data }) => {
+      if (!data.user) {
+        router.push('/auth/login')
+        return
+      }
+      setUser(data.user)
+      const { data: profile } = await supabase
+        .from('founder_profiles')
+        .select('user_id')
+        .eq('user_id', data.user.id)
+        .single()
+      if (!profile) {
+        router.push('/mentor')
+      }
     })
   }, [])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
-    window.location.href = '/auth/login'
+    router.push('/auth/login')
   }
 
   if (!user) return null
@@ -57,7 +70,10 @@ export default function Dashboard() {
         <div className="mt-8 bg-[#0f1229] border border-[#1e2340] rounded-xl p-6">
           <h2 className="font-semibold mb-4">Parla con il tuo mentor</h2>
           <p className="text-gray-400 text-sm mb-4">Il mentor AI ricorda il tuo contesto e ti guida passo dopo passo.</p>
-          <button className="bg-[#3B5BDB] text-white rounded-lg px-6 py-3 font-medium hover:bg-[#5C7CFA] transition-colors">
+          <button
+            onClick={() => router.push('/mentor')}
+            className="bg-[#3B5BDB] text-white rounded-lg px-6 py-3 font-medium hover:bg-[#5C7CFA] transition-colors"
+          >
             Inizia sessione →
           </button>
         </div>
