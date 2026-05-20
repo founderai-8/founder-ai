@@ -21,7 +21,7 @@ export default function Dashboard() {
         .eq('user_id', data.user.id)
         .single()
       if (!profile) {
-        router.push('/mentor')
+        router.push('/onboarding')
       }
     })
   }, [])
