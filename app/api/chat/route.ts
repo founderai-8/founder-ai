@@ -74,19 +74,29 @@ async function loadFounderProfile(userId: string): Promise<string> {
         const rows = await res.json()
         if (!Array.isArray(rows) || rows.length === 0) return ''
         const p = rows[0]
-        const parts: string[] = []
-        if (p.startup_name) parts.push(`Startup: ${p.startup_name}`)
-        if (p.sector) parts.push(`Settore: ${p.sector}`)
-        if (p.country) parts.push(`Paese: ${p.country}`)
-        if (p.idea) parts.push(`Idea: ${p.idea}`)
-        if (p.customer) parts.push(`Cliente target: ${p.customer}`)
-        if (p.stage) parts.push(`Stage: ${p.stage}`)
-        if (p.problem) parts.push(`Problema: ${p.problem}`)
-        if (p.goal) parts.push(`Obiettivo: ${p.goal}`)
-        if (p.fear) parts.push(`Paura: ${p.fear}`)
-        if (p.team) parts.push(`Team: ${p.team}`)
-        if (p.budget) parts.push(`Budget: ${p.budget}`)
-        return parts.length > 0 ? `\n\nPROFILO FOUNDER:\n${parts.join('\n')}` : ''
+        const lines: string[] = []
+        if (p.what_building)    lines.push(`Building: ${p.what_building}`)
+        if (p.customer)         lines.push(`Customer: ${p.customer}`)
+        if (p.stage)            lines.push(`Stage: ${p.stage}`)
+        if (p.problem)          lines.push(`Problem: ${p.problem}`)
+        if (p.country)          lines.push(`Country: ${p.country}`)
+        if (p.target_market)    lines.push(`Target market: ${p.target_market}`)
+        if (p.sector)           lines.push(`Sector: ${p.sector}`)
+        if (p.business_model)   lines.push(`Business model: ${p.business_model}`)
+        if (p.product_type)     lines.push(`Product type: ${p.product_type}`)
+        if (p.budget)           lines.push(`Budget: ${p.budget}`)
+        if (p.time_available)   lines.push(`Time available: ${p.time_available}`)
+        if (p.team_size)        lines.push(`Team: ${p.team_size}`)
+        if (p.audience_size)    lines.push(`Audience: ${p.audience_size}`)
+        if (p.investor_access)  lines.push(`Investor access: ${p.investor_access}`)
+        if (p.background)       lines.push(`Background: ${p.background}`)
+        if (p.first_business)   lines.push(`First business: ${p.first_business}`)
+        if (p.failed_before)    lines.push(`Failed before: ${p.failed_before}`)
+        if (p.biggest_mistake)  lines.push(`Biggest mistake: ${p.biggest_mistake}`)
+        if (p.end_goal)         lines.push(`End goal: ${p.end_goal}`)
+        if (p.biggest_fear)     lines.push(`Biggest fear: ${p.biggest_fear}`)
+        if (p.revenue_timeline) lines.push(`Revenue timeline: ${p.revenue_timeline}`)
+        return lines.length ? '\n\nFOUNDER PROFILE:\n' + lines.join('\n') : ''
     } catch {
         return ''
     }
