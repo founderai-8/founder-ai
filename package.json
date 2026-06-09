@@ -12,7 +12,7 @@
     "@anthropic-ai/sdk": "^0.92.0",
     "@netlify/plugin-nextjs": "^5.15.10",
     "@supabase/ssr": "^0.10.2",
-    "@supabase/supabase-js": "^2.105.1",
+    "@supabase/supabase-js": "^2.107.0",
     "next": "16.2.4",
     "react": "19.2.4",
     "react-dom": "19.2.4"
@@ -25,6 +25,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
     "tailwindcss": "^4",
+    "tsx": "^4.22.4",
     "typescript": "^5"
   }
 }

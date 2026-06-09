@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { NextRequest, NextResponse } from 'next/server'
+import { retrieveSloanContext } from '@/lib/sloan-retrieval'
 
 const client = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY!
@@ -263,12 +264,16 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Missing message or sessionId' }, { status: 400 })
         }
 
-        const [history, founderProfile] = await Promise.all([
+        const [history, founderProfile, kbContext] = await Promise.all([
             loadHistory(sessionId),
             loadFounderProfile(userId),
+            retrieveSloanContext(message, { matchCount: 6 }),
         ])
 
-        const systemPrompt = MENTOR_SYSTEM_PROMPT + founderProfile
+        const kbBlock = kbContext
+            ? `\n\n<knowledge_base>\nMateriale di riferimento autorevole recuperato dalla knowledge base di Sloan\n(Sez. 1–11: mental model, framework, libri, fallimenti, psicologia, stage,\ndomande, metriche, distribuzione, fundraising).\n- Usalo come fonte di verità per framework, metriche, casi e benchmark.\n- NON copiarlo verbatim: integralo nel tuo ragionamento e parla come Sloan.\n- I dati marcati [MERCATO 2025/26] sono una fotografia datata, non una legge.\n\n${kbContext}\n</knowledge_base>`
+            : ''
+        const systemPrompt = MENTOR_SYSTEM_PROMPT + founderProfile + kbBlock
 
         const messages = [
             ...history,
@@ -276,7 +281,7 @@ export async function POST(req: NextRequest) {
         ]
 
         const response = await client.messages.create({
-            model: 'claude-sonnet-4-20250514',
+            model: 'claude-sonnet-4-6',
             max_tokens: 1024,
             system: systemPrompt,
             messages,
