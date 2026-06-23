@@ -194,10 +194,10 @@ Sloan opens with: "You're building for restaurants — one of the hardest indust
 
 // ─── SUPABASE HELPERS ─────────────────────────────────────────────────────────
 
-async function loadHistory(sessionId: string): Promise<Array<{ role: 'user' | 'assistant'; content: string }>> {
+async function loadHistory(chatId: string): Promise<Array<{ role: 'user' | 'assistant'; content: string }>> {
     try {
         const res = await fetch(
-            `${SUPABASE_URL}/rest/v1/mentor_messages?session_id=eq.${sessionId}&order=created_at.asc&select=role,content`,
+            `${SUPABASE_URL}/rest/v1/mentor_messages?chat_id=eq.${chatId}&order=created_at.asc&select=role,content`,
             { headers: sbHeaders }
         )
         if (!res.ok) return []
@@ -208,12 +208,12 @@ async function loadHistory(sessionId: string): Promise<Array<{ role: 'user' | 'a
     }
 }
 
-async function saveMessage(sessionId: string, role: string, content: string) {
+async function saveMessage(chatId: string, role: string, content: string) {
     try {
         await fetch(`${SUPABASE_URL}/rest/v1/mentor_messages`, {
             method: 'POST',
             headers: sbHeaders,
-            body: JSON.stringify({ session_id: sessionId, role, content }),
+            body: JSON.stringify({ chat_id: chatId, role, content }),
         })
     } catch {
         // silently fail
@@ -263,14 +263,14 @@ async function loadFounderProfile(userId: string): Promise<string> {
 
 export async function POST(req: NextRequest) {
     try {
-        const { message, sessionId, userId } = await req.json()
+        const { message, chatId, userId } = await req.json()
 
-        if (!message || !sessionId) {
-            return NextResponse.json({ error: 'Missing message or sessionId' }, { status: 400 })
+        if (!message || !chatId) {
+            return NextResponse.json({ error: 'Missing message or chatId' }, { status: 400 })
         }
 
         const [history, founderProfile, kbContext] = await Promise.all([
-            loadHistory(sessionId),
+            loadHistory(chatId),
             loadFounderProfile(userId),
             retrieveSloanContext(message, { matchCount: 6 }),
         ])
@@ -295,8 +295,8 @@ export async function POST(req: NextRequest) {
         const reply = response.content[0].type === 'text' ? response.content[0].text : ''
 
         await Promise.all([
-            saveMessage(sessionId, 'user', message),
-            saveMessage(sessionId, 'assistant', reply),
+            saveMessage(chatId, 'user', message),
+            saveMessage(chatId, 'assistant', reply),
         ])
 
         return NextResponse.json({ message: reply })

@@ -4,15 +4,15 @@ const SUPABASE_URL = 'https://nkzgisgrbipbnaogeryw.supabase.co'
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 export async function GET(request: NextRequest) {
-    const sessionId = request.nextUrl.searchParams.get('sessionId')
+    const chatId = request.nextUrl.searchParams.get('chatId')
 
-    if (!sessionId) {
+    if (!chatId) {
         return NextResponse.json([], { status: 200 })
     }
 
     try {
         const res = await fetch(
-            `${SUPABASE_URL}/rest/v1/mentor_messages?session_id=eq.${sessionId}&order=created_at.asc&select=role,content`,
+            `${SUPABASE_URL}/rest/v1/mentor_messages?chat_id=eq.${chatId}&order=created_at.asc&select=role,content`,
             {
                 headers: {
                     apikey: SUPABASE_KEY,
