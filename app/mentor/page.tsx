@@ -115,7 +115,7 @@ export default function MentorPage() {
 
                 {messages.map((msg, i) => (
                     <div key={i} className={`mb-6 flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-xl px-5 py-3 rounded-2xl text-sm leading-relaxed ${
+                        <div className={`max-w-xl px-5 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
                             msg.role === 'user'
                                 ? 'bg-[#3B5BDB] text-white'
                                 : 'bg-[#0f1229] border border-[#1e2340] text-gray-200'
