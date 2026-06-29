@@ -5,8 +5,21 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { supabase } from '@/lib/supabase'
 
+interface Chat {
+  id: string
+  title: string
+  created_at: string
+}
+
+interface Profile {
+  stage?: string
+  what_building?: string
+}
+
 export default function Dashboard() {
   const [user, setUser] = useState<any>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
+  const [recentChats, setRecentChats] = useState<Chat[]>([])
   const router = useRouter()
 
   useEffect(() => {
@@ -15,14 +28,24 @@ export default function Dashboard() {
         router.push('/auth/login')
         return
       }
-      setUser(data.user)
-      const { data: profile } = await supabase
-        .from('founder_profiles')
-        .select('user_id')
-        .eq('user_id', data.user.id)
-        .single()
-      if (!profile) {
+      const u = data.user
+      setUser(u)
+
+      // Carica profilo e ultime chat in parallelo
+      const [profileRes, chatsRes] = await Promise.all([
+        supabase.from('founder_profiles').select('stage, what_building').eq('user_id', u.id).single(),
+        fetch(`/api/chats?userId=${u.id}`)
+      ])
+
+      if (!profileRes.data) {
         router.push('/onboarding')
+        return
+      }
+      setProfile(profileRes.data)
+
+      if (chatsRes.ok) {
+        const chats: Chat[] = await chatsRes.json()
+        if (Array.isArray(chats)) setRecentChats(chats.slice(0, 3))
       }
     })
   }, [])
@@ -32,19 +55,21 @@ export default function Dashboard() {
     router.push('/auth/login')
   }
 
+  const displayName = user?.email?.split('@')[0] ?? ''
+
   if (!user) return null
 
   return (
     <div className="min-h-screen bg-[#0a0c1a] text-white">
       <nav className="border-b border-[#1e2340] px-8 py-4 flex justify-between items-center">
         <Image
-            src="/Founder_AI_logo_transparent.png"
-            alt="FounderAI"
-            height={36}
-            width={120}
-            className="object-contain"
-            priority
-          />
+          src="/Founder_AI_logo_transparent.png"
+          alt="FounderAI"
+          height={36}
+          width={120}
+          className="object-contain"
+          priority
+        />
         <div className="flex items-center gap-4">
           <span className="text-gray-400 text-sm">{user.email}</span>
           <button
@@ -56,28 +81,19 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      <main className="px-8 py-12 max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Benvenuto su FounderAI</h1>
-        <p className="text-gray-400 mb-12">Il tuo mentor AI è pronto.</p>
+      <main className="px-6 py-10 max-w-3xl mx-auto w-full">
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-[#0f1229] border border-[#1e2340] rounded-xl p-6">
-            <p className="text-gray-400 text-sm mb-1">Sessioni mentor</p>
-            <p className="text-2xl font-bold">0</p>
-          </div>
-          <div className="bg-[#0f1229] border border-[#1e2340] rounded-xl p-6">
-            <p className="text-gray-400 text-sm mb-1">Decisioni tracciate</p>
-            <p className="text-2xl font-bold">0</p>
-          </div>
-          <div className="bg-[#0f1229] border border-[#1e2340] rounded-xl p-6">
-            <p className="text-gray-400 text-sm mb-1">Errori evitati</p>
-            <p className="text-2xl font-bold">0</p>
-          </div>
+        {/* Bentornato */}
+        <div className="mb-10">
+          <h1 className="text-3xl font-bold mb-1">Bentornato, {displayName}.</h1>
+          {profile?.stage && (
+            <p className="text-gray-400 text-sm">
+              Stai lavorando su: <span className="text-gray-300">{profile.what_building || profile.stage}</span>
+            </p>
+          )}
         </div>
 
-        <div className="mt-8 bg-[#0f1229] border border-[#1e2340] rounded-xl p-6">
-          <h2 className="font-semibold mb-4">Parla con il tuo mentor</h2>
-          <p className="text-gray-400 text-sm mb-4">Il mentor AI ricorda il tuo contesto e ti guida passo dopo passo.</p>
-          <button
-            onClick={() => router.push('/mentor')}
-            className="bg-[#3B5BDB] text-wh
+        {/* Nuova conversazione — CTA principale */}
+        <div className="bg-[#0f1229] border border-[#3B5BDB] rounded-2xl p-6 mb-8">
+          <p className="text-sm text-[#7F77DD] font-medium mb-1">Il tuo mentor è pronto</p>
+          <h2 className="text-xl font-bold
