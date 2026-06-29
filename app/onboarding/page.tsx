@@ -72,13 +72,13 @@ export default function Onboarding() {
     router.push('/mentor')
   }
 
-  const sections = ['Your Business', 'Your Market', 'Your Resources', 'Your Background', 'Goals & Mindset']
+  const sections = ['Il tuo progetto', 'Il tuo mercato', 'Le tue risorse', 'Il tuo background', 'Obiettivi e mindset']
 
   return (
     <div style={{ minHeight: '100vh', background: '#0a0c1a', color: 'white', fontFamily: 'system-ui', padding: '40px 20px' }}>
       <div style={{ maxWidth: 680, margin: '0 auto' }}>
 
-        {/* Progress */}
+        {/* Progresso */}
         <div style={{ marginBottom: 40 }}>
           <div style={{ fontSize: 13, color: '#7F77DD', marginBottom: 8 }}>{section} / 5 — {sections[section - 1]}</div>
           <div style={{ height: 3, background: '#1e2340', borderRadius: 2 }}>
@@ -86,202 +86,190 @@ export default function Onboarding() {
           </div>
         </div>
 
-        {/* SEZIONE 1 — Your Business */}
+        {/* SEZIONE 1 — Il tuo progetto */}
         {section === 1 && (
           <div>
-            <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Your Business</h2>
-            <span style={{ fontSize: 12, background: '#1e2340', color: '#7F77DD', padding: '2px 10px', borderRadius: 20 }}>Required</span>
+            <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Il tuo progetto</h2>
+            <span style={{ fontSize: 12, background: '#1e2340', color: '#7F77DD', padding: '2px 10px', borderRadius: 20 }}>Obbligatorio</span>
 
-            <Label text="What are you building?" sub="One or two sentences. Don't pitch — just explain." />
-            <Textarea field="what_building" placeholder="We help X do Y by doing Z..." />
+            <Label text="Cosa stai costruendo?" sub="Una o due frasi. Non fare il pitch — spiega e basta." />
+            <Textarea field="what_building" placeholder="Aiutiamo X a fare Y grazie a Z..." />
 
-            <Label text="Who is your customer?" sub="Be specific. Not 'small businesses' — who exactly?" />
-            <Textarea field="customer" placeholder="First-time founders who..." />
+            <Label text="Chi è il tuo cliente?" sub="Sii specifico. Non 'le piccole imprese' — chi esattamente?" />
+            <Textarea field="customer" placeholder="Founder alle prime armi che..." />
 
-            <Label text="Where are you right now?" sub="Be honest. This changes everything." />
+            <Label text="Dove sei adesso?" sub="Sii onesto. Cambia tutto." />
             <div style={{ marginTop: 8 }}>
-              {['Just an idea', 'Building MVP', 'Launched, pre-revenue', 'Early revenue ($1–$5k MRR)', 'Growing ($5k+ MRR)'].map(v => (
+              {['Solo un\'idea', 'Sto costruendo l\'MVP', 'Lanciato, pre-revenue', 'Prime entrate ($1–$5k MRR)', 'In crescita ($5k+ MRR)'].map(v => (
                 <Pill key={v} field="stage" value={v} />
               ))}
             </div>
 
-            <Label text="Most urgent problem right now?" sub="What's actually keeping you up at night." />
-            <Textarea field="problem" placeholder="The biggest thing blocking me right now is..." />
+            <Label text="Problema più urgente in questo momento?" sub="Cosa ti impedisce di dormire la notte." />
+            <Textarea field="problem" placeholder="La cosa che mi blocca di più adesso è..." />
           </div>
         )}
 
-        {/* SEZIONE 2 — Your Market */}
+        {/* SEZIONE 2 — Il tuo mercato */}
         {section === 2 && (
           <div>
-            <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Your Market</h2>
-            <span style={{ fontSize: 12, background: '#1e2340', color: '#6b7280', padding: '2px 10px', borderRadius: 20 }}>Optional — skip if you prefer</span>
+            <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Il tuo mercato</h2>
+            <span style={{ fontSize: 12, background: '#1e2340', color: '#6b7280', padding: '2px 10px', borderRadius: 20 }}>Facoltativo — salta pure se preferisci</span>
 
-            <Label text="Where are you based?" sub="Affects regulations, funding access, market dynamics." />
+            <Label text="Dove sei basato?" sub="Influenza normative, accesso ai finanziamenti e dinamiche di mercato." />
             <select
               value={form.country}
               onChange={e => setForm((f: any) => ({ ...f, country: e.target.value }))}
               style={{ width: '100%', background: '#0f1229', border: '1px solid #1e2340', borderRadius: 8, color: 'white', padding: '12px', fontSize: 14, outline: 'none', marginTop: 8 }}
             >
-              <option value="">Select your country...</option>
-              {['Afghanistan','Albania','Algeria','Argentina','Australia','Austria','Belgium','Bolivia','Brazil','Canada','Chile','China','Colombia','Croatia','Czech Republic','Denmark','Ecuador','Egypt','Estonia','Finland','France','Germany','Ghana','Greece','Hungary','India','Indonesia','Iran','Ireland','Israel','Italy','Japan','Jordan','Kenya','Latvia','Lithuania','Malaysia','Mexico','Morocco','Netherlands','New Zealand','Nigeria','Norway','Pakistan','Peru','Philippines','Poland','Portugal','Romania','Russia','Saudi Arabia','Singapore','South Africa','South Korea','Spain','Sweden','Switzerland','Taiwan','Thailand','Turkey','Ukraine','United Arab Emirates','United Kingdom','United States','Uruguay','Venezuela','Vietnam','Other'].map(c => (
+              <option value="">Seleziona il tuo paese...</option>
+              {['Afghanistan','Albania','Algeria','Argentina','Australia','Austria','Belgio','Bolivia','Brasile','Canada','Cile','Cina','Colombia','Croazia','Repubblica Ceca','Danimarca','Ecuador','Egitto','Estonia','Finlandia','Francia','Germania','Ghana','Grecia','Ungheria','India','Indonesia','Iran','Irlanda','Israele','Italia','Giappone','Giordania','Kenya','Lettonia','Lituania','Malesia','Messico','Marocco','Paesi Bassi','Nuova Zelanda','Nigeria','Norvegia','Pakistan','Perù','Filippine','Polonia','Portogallo','Romania','Russia','Arabia Saudita','Singapore','Sudafrica','Corea del Sud','Spagna','Svezia','Svizzera','Taiwan','Tailandia','Turchia','Ucraina','Emirati Arabi Uniti','Regno Unito','Stati Uniti','Uruguay','Venezuela','Vietnam','Altro'].map(c => (
                 <option key={c} value={c}>{c}</option>
               ))}
             </select>
 
-            <Label text="Target market?" sub="Where you sell. Can be multiple." />
+            <Label text="Mercato target?" sub="Dove vendi. Puoi selezionarne più di uno." />
             <div style={{ marginTop: 8 }}>
-              {['Local / National', 'Europe', 'North America', 'Latin America', 'Asia Pacific', 'Global', 'No geographic focus'].map(v => (
+              {['Locale / Nazionale', 'Europa', 'Nord America', 'America Latina', 'Asia Pacifico', 'Globale', 'Nessun focus geografico'].map(v => (
                 <Pill key={v} field="target_market" value={v} multi={true} />
               ))}
             </div>
 
-            <Label text="What sector?" />
+            <Label text="In quale settore operi?" />
             <div style={{ marginTop: 8 }}>
-              {['SaaS / Software', 'E-commerce / DTC', 'Marketplace', 'Creator Economy', 'Services / Agency', 'Fintech', 'Healthtech', 'Edtech', 'Hardware / Physical', 'Other'].map(v => (
+              {['SaaS / Software', 'E-commerce / DTC', 'Marketplace', 'Creator Economy', 'Servizi / Agenzia', 'Fintech', 'Healthtech', 'Edtech', 'Hardware / Fisico', 'Altro'].map(v => (
                 <Pill key={v} field="sector" value={v} />
               ))}
             </div>
 
-            <Label text="B2B or B2C?" />
+            <Label text="B2B o B2C?" />
             <div style={{ marginTop: 8 }}>
-              {['B2B', 'B2C', 'B2B2C', 'Both', 'Marketplace'].map(v => (
+              {['B2B', 'B2C', 'B2B2C', 'Entrambi', 'Marketplace'].map(v => (
                 <Pill key={v} field="business_model" value={v} />
               ))}
             </div>
 
-            <Label text="Type of product?" />
+            <Label text="Tipo di prodotto?" />
             <div style={{ marginTop: 8 }}>
-              {['Digital', 'Physical', 'Service', 'Hybrid'].map(v => (
+              {['Digitale', 'Fisico', 'Servizio', 'Ibrido'].map(v => (
                 <Pill key={v} field="product_type" value={v} />
               ))}
             </div>
           </div>
         )}
 
-        {/* SEZIONE 3 — Your Resources */}
+        {/* SEZIONE 3 — Le tue risorse */}
         {section === 3 && (
           <div>
-            <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Your Resources</h2>
-            <span style={{ fontSize: 12, background: '#1e2340', color: '#6b7280', padding: '2px 10px', borderRadius: 20 }}>Optional — skip if you prefer</span>
+            <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Le tue risorse</h2>
+            <span style={{ fontSize: 12, background: '#1e2340', color: '#6b7280', padding: '2px 10px', borderRadius: 20 }}>Facoltativo — salta pure se preferisci</span>
 
-            <Label text="Budget available?" sub="Total capital you can deploy right now." />
+            <Label text="Budget disponibile?" sub="Capitale totale che puoi investire adesso." />
             <div style={{ marginTop: 8 }}>
-              {['Bootstrap / $0', 'Under $5k', '$5k – $20k', '$20k – $100k', '$100k+', 'Funded'].map(v => (
+              {['Bootstrap / €0', 'Meno di €5k', '€5k – €20k', '€20k – €100k', 'Più di €100k', 'Già finanziato'].map(v => (
                 <Pill key={v} field="budget" value={v} />
               ))}
             </div>
 
-            <Label text="Time available?" />
+            <Label text="Tempo disponibile?" />
             <div style={{ marginTop: 8 }}>
-              {['Side project', 'Part-time (~20h/week)', 'Full-time', 'All in (80h+)'].map(v => (
+              {['Side project', 'Part-time (~20h/settimana)', 'Full-time', 'All in (80h+)'].map(v => (
                 <Pill key={v} field="time_available" value={v} />
               ))}
             </div>
 
-            <Label text="Solo or team?" />
+            <Label text="Solo o in squadra?" />
             <div style={{ marginTop: 8 }}>
-              {['Solo founder', 'Co-founder', 'Small team (3–5)', 'Team (6+)'].map(v => (
+              {['Founder solo', 'Co-founder', 'Team piccolo (3–5)', 'Team (6+)'].map(v => (
                 <Pill key={v} field="team_size" value={v} />
               ))}
             </div>
 
-            <Label text="Existing audience?" sub="Social, newsletter, community — any distribution." />
+            <Label text="Hai già un pubblico?" sub="Social, newsletter, community — qualsiasi distribuzione." />
             <div style={{ marginTop: 8 }}>
-              {['No audience', 'Small (under 1k)', 'Medium (1k–10k)', 'Large (10k+)'].map(v => (
+              {['Nessun pubblico', 'Piccolo (meno di 1k)', 'Medio (1k–10k)', 'Grande (10k+)'].map(v => (
                 <Pill key={v} field="audience_size" value={v} />
               ))}
             </div>
 
-            <Label text="Investor / network access?" />
+            <Label text="Accesso a investitori / network?" />
             <div style={{ marginTop: 8 }}>
-              {['No network', 'Some connections', 'Strong network', 'Already funded'].map(v => (
+              {['Nessun network', 'Qualche contatto', 'Network solido', 'Già finanziato'].map(v => (
                 <Pill key={v} field="investor_access" value={v} />
               ))}
             </div>
           </div>
         )}
 
-        {/* SEZIONE 4 — Your Background */}
+        {/* SEZIONE 4 — Il tuo background */}
         {section === 4 && (
           <div>
-            <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Your Background</h2>
-            <span style={{ fontSize: 12, background: '#1e2340', color: '#6b7280', padding: '2px 10px', borderRadius: 20 }}>Optional — skip if you prefer</span>
+            <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Il tuo background</h2>
+            <span style={{ fontSize: 12, background: '#1e2340', color: '#6b7280', padding: '2px 10px', borderRadius: 20 }}>Facoltativo — salta pure se preferisci</span>
 
-            <Label text="Main background?" />
+            <Label text="Qual è il tuo background principale?" />
             <div style={{ marginTop: 8 }}>
-              {['Technical', 'Business', 'Creative', 'Domain expert', 'Generalist'].map(v => (
+              {['Tecnico', 'Business', 'Creativo', 'Esperto di settore', 'Generalista'].map(v => (
                 <Pill key={v} field="background" value={v} />
               ))}
             </div>
 
-            <Label text="First business?" />
+            <Label text="Prima impresa?" />
             <div style={{ marginTop: 8 }}>
-              {['Yes, first time', 'Tried before', 'Serial founder', 'Operator turned founder'].map(v => (
+              {['Sì, prima volta', 'Ci ho già provato', 'Serial founder', 'Operatore diventato founder'].map(v => (
                 <Pill key={v} field="first_business" value={v} />
               ))}
             </div>
 
-            <Label text="Failed a previous project?" />
+            <Label text="Hai già fallito un progetto?" />
             <div style={{ marginTop: 8 }}>
-              {['No', 'Yes, small', 'Yes, significantly', 'Multiple times'].map(v => (
+              {['No', 'Sì, piccolo fallimento', 'Sì, fallimento importante', 'Più volte'].map(v => (
                 <Pill key={v} field="failed_before" value={v} />
               ))}
             </div>
 
-            <Label text="Biggest mistake so far?" sub="Skip if none yet." />
-            <Textarea field="biggest_mistake" placeholder="The mistake that taught me the most was..." />
+            <Label text="Errore più grande finora?" sub="Salta se non ne hai ancora fatti." />
+            <Textarea field="biggest_mistake" placeholder="L'errore che mi ha insegnato di più è stato..." />
           </div>
         )}
 
-        {/* SEZIONE 5 — Goals & Mindset */}
+        {/* SEZIONE 5 — Obiettivi e mindset */}
         {section === 5 && (
           <div>
-            <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Goals & Mindset</h2>
-            <span style={{ fontSize: 12, background: '#1e2340', color: '#6b7280', padding: '2px 10px', borderRadius: 20 }}>Optional — skip if you prefer</span>
+            <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Obiettivi e mindset</h2>
+            <span style={{ fontSize: 12, background: '#1e2340', color: '#6b7280', padding: '2px 10px', borderRadius: 20 }}>Facoltativo — salta pure se preferisci</span>
 
-            <Label text="End goal?" sub="No right answer — but it changes everything." />
+            <Label text="Obiettivo finale?" sub="Non esiste la risposta giusta — ma cambia tutto." />
             <div style={{ marginTop: 8 }}>
-              {['Lifestyle business', 'Scale & grow', 'Exit / acquisition', 'VC-backed startup', 'Impact / mission', 'Not sure yet'].map(v => (
+              {['Business lifestyle', 'Crescere e scalare', 'Exit / acquisizione', 'Startup VC-backed', 'Impatto / missione', 'Non lo so ancora'].map(v => (
                 <Pill key={v} field="end_goal" value={v} />
               ))}
             </div>
 
-            <Label text="Biggest fear right now?" />
+            <Label text="Paura più grande in questo momento?" />
             <div style={{ marginTop: 8 }}>
-              {['Failing publicly', 'Running out of money', 'Building the wrong thing', 'Getting crushed by competition', 'Doing this alone', 'Moving too slow'].map(v => (
+              {['Fallire pubblicamente', 'Rimanere senza soldi', 'Costruire la cosa sbagliata', 'Essere schiacciato dalla concorrenza', 'Farlo da solo', 'Muovermi troppo lentamente'].map(v => (
                 <Pill key={v} field="biggest_fear" value={v} />
               ))}
             </div>
 
-            <Label text="Timeline to first revenue?" />
+            <Label text="Entro quando vuoi il primo ricavo?" />
             <div style={{ marginTop: 8 }}>
-              {['Already generating', 'Within 1 month', '1–3 months', '3–6 months', '6–12 months', 'Not sure'].map(v => (
+              {['Già fattura', 'Entro 1 mese', '1–3 mesi', '3–6 mesi', '6–12 mesi', 'Non lo so'].map(v => (
                 <Pill key={v} field="revenue_timeline" value={v} />
               ))}
             </div>
           </div>
         )}
 
-        {/* Navigation */}
+        {/* Navigazione */}
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 48 }}>
           {section > 1 ? (
             <button onClick={() => setSection(s => s - 1)} style={{ background: 'transparent', border: '1px solid #1e2340', color: 'white', padding: '12px 24px', borderRadius: 8, cursor: 'pointer', fontSize: 14 }}>
-              ← Back
+              ← Indietro
             </button>
           ) : <span />}
 
           {section < 5 ? (
             <button onClick={() => setSection(s => s + 1)} style={{ background: '#534AB7', border: 'none', color: 'white', padding: '12px 24px', borderRadius: 8, cursor: 'pointer', fontSize: 14 }}>
-              Next →
-            </button>
-          ) : (
-            <button onClick={handleSubmit} style={{ background: '#534AB7', border: 'none', color: 'white', padding: '12px 24px', borderRadius: 8, cursor: 'pointer', fontSize: 14, fontWeight: 600 }}>
-              Start with your mentor →
-            </button>
-          )}
-        </div>
-
-      </div>
-    </div>
-  )
-}
+  
