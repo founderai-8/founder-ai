@@ -47,9 +47,16 @@ export default function MentorPage() {
     }, [])
 
     const initChats = async (uid: string) => {
-        const res = await fetch(`/api/chats?userId=${uid}`)
-        if (!res.ok) return
-        let list: Chat[] = await res.json()
+        let list: Chat[] = []
+        try {
+            const res = await fetch(`/api/chats?userId=${uid}`)
+            if (res.ok) {
+                const data = await res.json()
+                if (Array.isArray(data)) list = data
+            }
+        } catch {
+            // continua anche se la fetch fallisce
+        }
 
         if (list.length === 0) {
             const created = await createChat(uid)
