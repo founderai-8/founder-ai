@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import Image from 'next/image'
 import { supabase } from '@/lib/supabase'
 
 interface Message {
@@ -285,7 +286,14 @@ export default function MentorPage() {
                         </button>
                     )}
                     <a href="/dashboard" className="text-gray-400 hover:text-white text-sm">← Dashboard</a>
-                    <span className="font-bold ml-auto">Mentor AI</span>
+                    <Image
+                        src="/Founder_AI_logo_transparent.png"
+                        alt="FounderAI"
+                        height={32}
+                        width={108}
+                        className="object-contain ml-auto"
+                        priority
+                    />
                     <div className="w-4" />
                 </nav>
 
@@ -335,13 +343,4 @@ export default function MentorPage() {
                         <button
                             onClick={sendMessage}
                             disabled={loading || !input.trim() || !currentChatId}
-                            className="bg-[#3B5BDB] text-white rounded-xl px-6 py-3 font-medium hover:bg-[#5C7CFA] transition-colors disabled:opacity-40"
-                        >
-                            →
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
-}
+                            className="bg-[#3B5BDB] text-white 

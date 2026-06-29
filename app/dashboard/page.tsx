@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { supabase } from '@/lib/supabase'
 
 export default function Dashboard() {
@@ -36,7 +37,14 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-[#0a0c1a] text-white">
       <nav className="border-b border-[#1e2340] px-8 py-4 flex justify-between items-center">
-        <span className="font-bold text-lg">FounderAI</span>
+        <Image
+            src="/Founder_AI_logo_transparent.png"
+            alt="FounderAI"
+            height={36}
+            width={120}
+            className="object-contain"
+            priority
+          />
         <div className="flex items-center gap-4">
           <span className="text-gray-400 text-sm">{user.email}</span>
           <button
@@ -72,12 +80,4 @@ export default function Dashboard() {
           <p className="text-gray-400 text-sm mb-4">Il mentor AI ricorda il tuo contesto e ti guida passo dopo passo.</p>
           <button
             onClick={() => router.push('/mentor')}
-            className="bg-[#3B5BDB] text-white rounded-lg px-6 py-3 font-medium hover:bg-[#5C7CFA] transition-colors"
-          >
-            Inizia sessione →
-          </button>
-        </div>
-      </main>
-    </div>
-  )
-}
+            className="bg-[#3B5BDB] text-wh
