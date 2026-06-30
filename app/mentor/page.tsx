@@ -343,4 +343,13 @@ export default function MentorPage() {
                         <button
                             onClick={sendMessage}
                             disabled={loading || !input.trim() || !currentChatId}
-                            className="bg-[#3B5BDB] text-white 
+                            className="bg-[#3B5BDB] text-white rounded-xl px-6 py-3 font-medium hover:bg-[#5C7CFA] transition-colors disabled:opacity-40"
+                        >
+                            →
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}

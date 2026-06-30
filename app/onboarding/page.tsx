@@ -272,4 +272,16 @@ export default function Onboarding() {
 
           {section < 5 ? (
             <button onClick={() => setSection(s => s + 1)} style={{ background: '#534AB7', border: 'none', color: 'white', padding: '12px 24px', borderRadius: 8, cursor: 'pointer', fontSize: 14 }}>
-  
+              Avanti →
+            </button>
+          ) : (
+            <button onClick={handleSubmit} style={{ background: '#534AB7', border: 'none', color: 'white', padding: '12px 24px', borderRadius: 8, cursor: 'pointer', fontSize: 14, fontWeight: 600 }}>
+              Inizia con il tuo mentor →
+            </button>
+          )}
+        </div>
+
+      </div>
+    </div>
+  )
+}
